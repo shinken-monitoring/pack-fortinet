@@ -4,7 +4,7 @@
 	"version": "1.4",
 	"homepage": "https://github.com/shinken-monitoring/pack-fortinet",
 	"author": "Jean Gabes",
-	"description": "",
+	"description": "Fortinet network checks",
 	"contributors": [
 	  {
 		"name": "Jean Gabes",
@@ -18,7 +18,8 @@
 	"repository": "https://github.com/shinken-monitoring/pack-fortinet",
 	"keywords": [
 	  "pack",
-	  
+	  "network",
+	  "fortinet"	  
 	],
 	"dependencies": {
 	  "shinken": ">=1.4"
