@@ -4,12 +4,16 @@
 	"version": "1.4",
 	"homepage": "https://github.com/shinken-monitoring/pack-fortinet",
 	"author": "Jean Gabes",
-	"description": "Fortinet network checks",
+	"description": "Fortigate/Fortinet health monitoring",
 	"contributors": [
 	  {
 		"name": "Jean Gabes",
 		"email": "naparuba@gmail.com"
 	  },
+          {
+                "name": "Olivier Hanesse",
+                "email": "olivier.hanesse@gmail.com"
+          },
 	  {
 		"name": "Imrane Dessai",
 		"email": "dessai.imrane@gmail.com"
@@ -19,6 +23,7 @@
 	"keywords": [
 	  "pack",
 	  "network",
+	  "firewall",
 	  "fortinet"	  
 	],
 	"dependencies": {
