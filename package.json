@@ -17,14 +17,18 @@
 	  {
 		"name": "Imrane Dessai",
 		"email": "dessai.imrane@gmail.com"
-	  } 
+	  }
+	  {
+		"name": "Romain THERRAT",
+		"email": "romain42@gmail.com"
+	  },
 	],
 	"repository": "https://github.com/shinken-monitoring/pack-fortinet",
 	"keywords": [
 	  "pack",
 	  "network",
 	  "firewall",
-	  "fortinet"	  
+	  "fortinet"
 	],
 	"dependencies": {
 	  "shinken": ">=1.4"
