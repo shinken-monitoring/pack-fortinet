@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # This  Plugin checks the cluster state of FortiGate
-# Tested on: FortiGate 100D / FortiGate 300C (both 5.0.3)
+# Tested on: FortiGate 100D / FortiGate 300C (both 5.0.3) 
 #
 # Author: Oliver Skibbe (oliskibbe (at) gmail.com)
 # Date: 2013-07-28
@@ -9,22 +9,23 @@
 #	- initial release (cluster, cpu, memory, session support)
 #	- added vpn support, based on check_fortigate_vpn.pl: Copyright (c) 2009 Gerrit Doornenbal, g(dot)doornenbal(at)hccnet(dot)nl
 #
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
+# This program is free software; you can redistribute it and/or 
+# modify it under the terms of the GNU General Public License 
+# as published by the Free Software Foundation; either version 2 
 # of the License, or (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# This program is distributed in the hope that it will be useful, 
+# but WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
 # GNU General Public License for more details.
 #
-# If you wish to receive a copy of the GNU General Public License,
-# write to the Free Software Foundation, Inc.,
+# If you wish to receive a copy of the GNU General Public License, 
+# write to the Free Software Foundation, Inc., 
 # 59 Temple Place - Suite 330, Boston, MA 02111-130
 # Description:
 
 use strict;
+use File::Path qw( make_path );
 use Net::SNMP;
 use List::Compare;
 use Switch;
@@ -68,7 +69,7 @@ my $oidf_tunname = ".3";                                                # Locati
 ## Stuff ##
 
 my $state;							# return state
-my $path = "/usr/local/shinken/libexec/FortiSerial";			# path to store serial filenames
+my $path = "/tmp/FortiSerial";					# path to store serial filenames
 my $filename = $path . "/" . $ip;				# file name to store serials
 my $oid;							# helper var
 my $value;							# helper var
@@ -89,7 +90,7 @@ switch ( lc($type) ) {
 }
 
 # Close the connection
-close_snmp_session($session);
+close_snmp_session($session);  
 
 # exit with a return code matching the state...
 print $string."\n";
@@ -130,7 +131,7 @@ sub get_health_value {
 
 	if ( $value > $crit ) {
 		$state = "CRITICAL";
-		$string = $label . " is critical: " . $value . $UOM;
+		$string = $label . " is critical: " . $value . $UOM; 
 	} elsif ( $value > $warn ) {
 		$state = "WARNING";
 		$string = $label . " is warning: " . $value . $UOM;
@@ -155,11 +156,18 @@ sub get_cluster_state {
 
 	my %cluster_types = (1 => "Standalone", 2 => "Active/Active", 3 => "Active/Passive");
 
+
 	# first time, write cluster members to helper file
 	if ( ! -e $filename || $reset_file ) {
+                if ( ! -d $path ) {
+                        eval { make_path($path) };
+                        if ($@) {
+                                die "Couldn't create $path: $@";
+                        }
+                }
 	        # open file handle to write (create/truncate)
         	open (SERIALHANDLE,"+>$filename") || die "Error while creating $filename";
-
+	
         	# write serials to file
 	        while (($oid, $value) = each (%snmp_serials)) {
         	        print (SERIALHANDLE $value . "\n");
@@ -183,11 +191,11 @@ sub get_cluster_state {
         	my @file_serials = <SERIALHANDLE>;                      # push lines into file_serials
 	        chomp(@file_serials);                           # remove "\n" if exists in array elements
         	close (SERIALHANDLE);                           # close file handle
-
-
+	
+		
 	        # compare serial arrays
         	my $comparedList = List::Compare->new('--unsorted', \@help_serials, \@file_serials);
-
+	
 	        if ( $comparedList->is_LequivalentR ) {
         	        $string = "HA (" . $cluster_types{$cluster_type} . ") is active";
 	                $state = "OK";
@@ -196,7 +204,7 @@ sub get_cluster_state {
                 	$state = "WARNING";
         	}
 	} # end scalar count
-
+	
 	# if preferred master serial is not master
 	if ( $pri_serial && ( $pri_serial ne $curr_serial ) ) {
         	$string = $string . ", preferred master " . $pri_serial . " is not master!";
@@ -234,7 +242,7 @@ sub get_vpn_state {
 		while (($oid, $value) = each (%tunnels)) {
 			#Bump the total tunnel count
 			$ipstuncount++;
-
+			
 			#print "Tunnel name (" . $oid_ipsectuntableroot . $oidf_tunname . "." . $ipstuncount . ") is: " . get_snmp_value($session, $oid_ipsectuntableroot . $oidf_tunname . "." . $ipstuncount) . "\n";
 			#print "Tunnel status (" . $oid_ipsectuntableroot . $oidf_tunstatus . "." . $ipstuncount . ") is: " . get_snmp_value($session, $oid_ipsectuntableroot . $oidf_tunstatus . "." . $ipstuncount) . "\n";
 
@@ -296,14 +304,14 @@ sub get_vpn_state {
 
 sub close_snmp_session{
   my $session = $_[0];
-
+  
   $session->close();
 } # end close snmp session
 
 sub get_snmp_value{
 	my $session = $_[0];
 	my $oid     = $_[1];
-	my (%result) = %{get_snmp_request($session, $oid) or die ("SNMP service is not available on ".$ip) };
+	my (%result) = %{get_snmp_request($session, $oid) or die ("SNMP service is not available on ".$ip) }; 
 	return $result{$oid};
 } # end get snmp value
 
@@ -316,9 +324,9 @@ sub get_snmp_request{
 sub get_snmp_table{
 	my $session = $_[0];
 	my $oid     = $_[1];
-	return $session->get_table(
+	return $session->get_table(	
 			-baseoid =>$oid
-			);
+			); 
 } # end get snmp table
 
 
@@ -354,8 +362,8 @@ sub parse_args
 
 	pod2usage(-exitval => 3, -verbose => 2) if $help;
 
-  	return ($ip, $community, $type, $warn, $crit, $slave, $pri_serial, $reset_file, $mode, $vpnmode);
-}
+  	return ($ip, $community, $type, $warn, $crit, $slave, $pri_serial, $reset_file, $mode, $vpnmode); 
+}		
 
 __END__
 
@@ -374,33 +382,33 @@ Options:
 	-T -- type STRING CPU, MEM, Ses, VPN, Cluster
 	-S --serial STRING Primary serial number
 	-s --slave get values of slave
-	-w --warning INTEGER Warning threshold, applies to cpu, mem, session.
-	-c --critical INTEGER Critical threshold,  applies to cpu, mem, session.
+	-w --warning INTEGER Warning threshold, applies to cpu, mem, session. 
+	-c --critical INTEGER Critical threshold,  applies to cpu, mem, session. 
 	-R --reset Resets ip file (cluster only)
-	-M --mode STRING Output-Mode: 0 => just print, 1 => print and show failed tunnel, 2 => critical
+	-M --mode STRING Output-Mode: 0 => just print, 1 => print and show failed tunnel, 2 => critical 
 	-V --vpnmode STRING VPN-Mode: both => IPSec & SSL/OpenVPN, ipsec => IPSec only, ssl => SSL/OpenVPN only
 	-? --help Returns full help text
 
-
+	
 =head1 OPTIONS
 
 =over 8
-
+	 
 =item B<-H--host>
-
+ 
 STRING or IPADDRESS - Check interface on the indicated host.
 
 =item B<-C|--community>
 
 STRING - Community-String for SNMP
-
+	 
 =item B<-T|--type>
 
 STRING - CPU, MEM, Ses, VPN, Cluster
 
 =item B<-S|--serial>
 
-STRING - Primary serial number.
+STRING - Primary serial number. 
 
 =item B<-s|--slave>
 
@@ -408,11 +416,11 @@ BOOL - Get values of slave
 
 =item B<-w|--warning>
 
-INTEGER - Warning threshold, applies to cpu, mem, session.
-
+INTEGER - Warning threshold, applies to cpu, mem, session. 
+	 
 =item B<-c|--critical>
 
-INTEGER - Critical threshold, applies to cpu, mem, session.
+INTEGER - Critical threshold, applies to cpu, mem, session. 
 
 =item B<-R|--reset>
 
@@ -420,7 +428,7 @@ BOOL - Resets ip file (cluster only)
 
 =item B<-M|--mode>
 
-STRING - Output-Mode: 0 => just print, 1 => print and show failed tunnel, 2 => critical
+STRING - Output-Mode: 0 => just print, 1 => print and show failed tunnel, 2 => critical 
 
 =item B<-V|--vpnmode>
 
@@ -429,10 +437,10 @@ STRING - VPN-Mode: both => IPSec & SSL/OpenVPN, ipsec => IPSec only, ssl => SSL/
 =back
 
 =head1 DESCRIPTION
+	
+This plugin checks Fortinet FortiGate devices via SNMP 
 
-This plugin checks Fortinet FortiGate devices via SNMP
-
-=head2 From Web:
+=head2 From Web: 
 
 =item 1. Select Network -> Interface -> Local interface
 
@@ -483,3 +491,4 @@ Thats it!
 =cut
 
 # EOF
+
