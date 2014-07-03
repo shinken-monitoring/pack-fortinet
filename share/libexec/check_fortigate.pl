@@ -1,9 +1,10 @@
 #!/usr/bin/perl
 # This  Plugin checks the cluster state of FortiGate
 # Tested on: FortiGate 100D / FortiGate 300C (both 5.0.3) 
+# Tested on: Fortigate 200B (4.0.10)
 #
 # Author: Oliver Skibbe (oliskibbe (at) gmail.com)
-# Date: 2013-07-28
+# Date: 2014-07-03
 #
 # Changelog:
 #	- initial release (cluster, cpu, memory, session support)
@@ -48,8 +49,8 @@ my ($session, $error) = get_snmp_session($ip, $community);	# Open an SNMP connec
 
 ## OIDs ##
 my $oid_unitdesc = ".1.3.6.1.2.1.1.1.0";			# Location of Fortinet device description... (String)
-my $oid_serial = ".1.3.6.1.2.1.1.5.0";				# Location of Fortinet serial number (String)
-my $oid_cluster_type = ".1.3.6.1.4.1.12356.101.13.1.1.0";	# Location of Fortinet serial number (String)
+my $oid_serial = "1.3.6.1.4.1.12356.1.2.0";			# Location of Fortinet serial number (String)
+my $oid_cluster_type = ".1.3.6.1.4.1.12356.101.13.1.1.0";	# Location of Cluster Type (Integer)
 my $oid_cluster_serials = ".1.3.6.1.4.1.12356.101.13.2.1.1.2";	# Location of Cluster serials (String)
 # Generic my $oid_cpu = ".1.3.6.1.4.1.12356.101.4.1.3.0";	# Location of CPU (%)
 my $oid_mem = ".1.3.6.1.4.1.12356.101.13.2.1.1.4";		# Location of cluster member Mem (%)
