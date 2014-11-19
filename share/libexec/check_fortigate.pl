@@ -32,6 +32,7 @@ use List::Compare;
 use Switch;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use Pod::Usage;
+use Scalar::Util qw(looks_like_number);
 
 # Parse out the arguments...
 my ($ip, $community, $type, $warn, $crit, $slave, $pri_serial, $reset_file, $mode, $vpnmode) = parse_args();
@@ -130,7 +131,10 @@ sub get_health_value {
 
 	$value = get_snmp_value($session, $oid);
 
-	if ( $value > $crit ) {
+	if ( !looks_like_number($value) ) {
+		$state = "CRITICAL";
+		$string = $label . " is critical: " . $oid . " is missing";
+	}elsif ( $value > $crit ) {
 		$state = "CRITICAL";
 		$string = $label . " is critical: " . $value . $UOM; 
 	} elsif ( $value > $warn ) {
